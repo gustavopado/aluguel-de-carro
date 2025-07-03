@@ -30,21 +30,21 @@
       display: none;
     }
 
-    .login-box, .veiculos, .formulario, .mensagem {
+    .container {
       max-width: 600px;
       margin: auto;
       background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px #999;
+      box-shadow: 0 0 10px #ccc;
     }
 
     input, button {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
+      margin: 10px 0;
       border-radius: 5px;
+      border: 1px solid #ccc;
     }
 
     button {
@@ -55,15 +55,12 @@
     }
 
     .carro {
-      border: 1px solid #ddd;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 5px;
+      margin: 15px 0;
     }
 
-    .carro button {
-      width: auto;
-      margin-top: 10px;
+    .carro img {
+      width: 100%;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -74,98 +71,101 @@
 </header>
 
 <main>
-  <!-- Tela de Login -->
-  <section id="login" class="login-box">
+
+  <!-- Página de Login -->
+  <section id="login" class="container">
     <h2>Login</h2>
     <input type="text" id="usuario" placeholder="Usuário">
     <input type="password" id="senha" placeholder="Senha">
     <button onclick="fazerLogin()">Entrar</button>
-    <p id="erroLogin" style="color:red;"></p>
+    <p id="erroLogin" style="color: red;"></p>
   </section>
 
   <!-- Página Inicial -->
-  <section id="home" class="hidden">
-    <h2>Bem-vindo à Locadora</h2>
-    <p>Escolha um dos veículos para alugar.</p>
-    <button onclick="mostrarVeiculos()">Ver Veículos</button>
+  <section id="home" class="container hidden">
+    <h2>Bem-vindo!</h2>
+    <p>Escolha um veículo para alugar.</p>
+    <button onclick="mostrarPagina('veiculos')">Ver Veículos</button>
+    <button onclick="mostrarPagina('login')">Voltar</button>
   </section>
 
-  <!-- Galeria de Veículos -->
-  <section id="veiculos" class="veiculos hidden">
+  <!-- Página de Veículos -->
+  <section id="veiculos" class="container hidden">
     <h2>Veículos Disponíveis</h2>
+
     <div class="carro">
-      <h3>Carro 1 - Fiat Argo</h3>
-      <img src="249.png" alt="Fiat Argo" style="width:100%">
-      <button onclick="selecionarCarro('Fiat Argo')">Alugar</button>
+      <h3>Fiat Argo</h3>
+      <img src="249.png" alt="Fiat Argo">
+      <button onclick="selecionarVeiculo('Fiat Argo')">Alugar este</button>
     </div>
+
     <div class="carro">
-      <h3>Carro 2 - Chevrolet Onix</h3>
-      <img src="onix.png" alt="Onix" style="width:100%">
-      <button onclick="selecionarCarro('Chevrolet Onix')">Alugar</button>
+      <h3>Chevrolet Onix</h3>
+      <img src="onix.png" alt="Onix">
+      <button onclick="selecionarVeiculo('Chevrolet Onix')">Alugar este</button>
     </div>
+
+    <button onclick="mostrarPagina('home')">Voltar</button>
   </section>
 
-  <!-- Formulário para dados do motorista -->
-  <section id="formulario" class="formulario hidden">
-    <h2>Informações do Motorista</h2>
-    <p id="carroEscolhido"></p>
-    <input type="text" id="nomeMotorista" placeholder="Nome do Motorista">
-    <input type="text" id="cnhMotorista" placeholder="Número da CNH">
-    <button onclick="finalizarPedido()">Finalizar Pedido</button>
+  <!-- Página do Formulário -->
+  <section id="formulario" class="container hidden">
+    <h2>Dados do Motorista</h2>
+    <p id="veiculoSelecionado"></p>
+    <input type="text" id="nome" placeholder="Nome completo">
+    <input type="text" id="cnh" placeholder="Número da CNH">
+    <button onclick="finalizarAluguel()">Finalizar Pedido</button>
+    <button onclick="mostrarPagina('veiculos')">Voltar</button>
   </section>
 
-  <!-- Mensagem Final -->
-  <section id="mensagem" class="mensagem hidden">
+  <!-- Página de Confirmação -->
+  <section id="confirmacao" class="container hidden">
     <h2>Aluguel Efetuado com Sucesso!</h2>
-    <p>Obrigado por escolher nossa locadora.</p>
+    <p>Obrigado por alugar conosco.</p>
+    <button onclick="mostrarPagina('home')">Voltar à Página Inicial</button>
   </section>
+
 </main>
 
 <script>
-  function fazerLogin() {
-    const usuario = document.getElementById("usuario").value;
-    const senha = document.getElementById("senha").value;
+  function mostrarPagina(id) {
+    const paginas = ['login', 'home', 'veiculos', 'formulario', 'confirmacao'];
+    paginas.forEach(pagina => {
+      document.getElementById(pagina).classList.add('hidden');
+    });
+    document.getElementById(id).classList.remove('hidden');
+  }
 
-    if (usuario === "Admin" && senha === "123@4") {
-      document.getElementById("login").classList.add("hidden");
-      document.getElementById("home").classList.remove("hidden");
+  function fazerLogin() {
+    const usuario = document.getElementById('usuario').value;
+    const senha = document.getElementById('senha').value;
+
+    if (usuario === 'Admin' && senha === '123@4') {
+      mostrarPagina('home');
     } else {
-      document.getElementById("erroLogin").innerText = "Usuário ou senha inválidos!";
+      document.getElementById('erroLogin').innerText = 'Usuário ou senha incorretos!';
     }
   }
 
-  function mostrarVeiculos() {
-    document.getElementById("home").classList.add("hidden");
-    document.getElementById("veiculos").classList.remove("hidden");
+  let veiculoEscolhido = '';
+
+  function selecionarVeiculo(nome) {
+    veiculoEscolhido = nome;
+    document.getElementById('veiculoSelecionado').innerText = 'Veículo escolhido: ' + nome;
+    mostrarPagina('formulario');
   }
 
-  let carroSelecionado = "";
-
-  function selecionarCarro(carro) {
-    carroSelecionado = carro;
-    document.getElementById("carroEscolhido").innerText = "Veículo selecionado: " + carro;
-    document.getElementById("veiculos").classList.add("hidden");
-    document.getElementById("formulario").classList.remove("hidden");
-  }
-
-  function finalizarPedido() {
-    const nome = document.getElementById("nomeMotorista").value;
-    const cnh = document.getElementById("cnhMotorista").value;
+  function finalizarAluguel() {
+    const nome = document.getElementById('nome').value;
+    const cnh = document.getElementById('cnh').value;
 
     if (nome && cnh) {
-      document.getElementById("formulario").classList.add("hidden");
-      document.getElementById("mensagem").classList.remove("hidden");
+      mostrarPagina('confirmacao');
     } else {
-      alert("Por favor, preencha todos os campos!");
+      alert('Por favor, preencha todos os dados.');
     }
   }
-  
 </script>
-<section class="secao-1">
-    <h3></h3>
-    <p></p>
-          <a href="aluguel.html" class="btn btn-info link-a-1">Inicio</a>
-       
-</section>
+
 </body>
 </html>
